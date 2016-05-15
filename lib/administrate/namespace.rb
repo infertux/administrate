@@ -5,7 +5,12 @@ module Administrate
     end
 
     def resources
-      @resources ||= routes.map(&:first).uniq.map(&:to_sym)
+      @resources ||= begin
+        suffix = /_dashboard.rb\z/.freeze
+        dashboards = Dir.entries(Rails.root.join("app", "dashboards")).grep(suffix)
+
+        dashboards.map { |dashboard| dashboard.sub(suffix, '').pluralize.to_sym }
+      end
     end
 
     def routes
